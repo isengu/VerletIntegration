@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Verlet Integration</title>
+
+	<style type="text/css">
+		canvas {
+			border: 1px solid black;
+		}
+	</style>
+</head>
+<body>
+
+<script type="text/javascript" src="lib/canvas.js"></script>
+<script type="text/javascript" src="lib/vector.js"></script>
+<script type="text/javascript" src="src/point.js"></script>
+<script type="text/javascript" src="src/stick.js"></script>
+<script type="text/javascript">
+	const canvas = new Canvas(900, 700);
+	const points = [];
+	const sticks = [];
+
+	const gravity = 0.3;
+
+
+	const row = 40;
+	const col = 41;
+	const gap = 10;
+
+	for(let i = 0; i < row; i++) {
+		for(let j = 0; j < col; j++) {
+			if(i === 0 && j % 5 === 0) {
+				points.push(new Point(j*gap + 10, i*0 + 10, true));
+			}
+			else {
+				points.push(new Point(j*gap + 10, i*0 + 10));
+			}
+		}
+	}
+
+	for(let i = 0; i < row; i++) {
+		for(let j = 0; j < col; j++) {
+			if(j != col-1) sticks.push(new Stick(points[j + col*i], points[j + col*i + 1], gap));
+			if(i != row-1) sticks.push(new Stick(points[j + col*i], points[j + col*(i+1)], gap));
+		}
+	}
+
+	for(let i = 0; i < 13; i++) {
+		if(i === 0) points.push(new Point(i*10 + 700, 100, true));
+		else {
+			points.push(new Point(i*10 + 700, 100));
+			sticks.push(new Stick(points[row*col+i-1], points[row*col+i], 20));
+		}
+	}
+
+
+	function animate() {
+		// const start = performance.now();
+		canvas.clear();
+
+		updatePoints();
+		for(let j = 0; j < 3; j++){
+			updateSticks();
+		}
+		constrain();
+		render();
+
+		// canvas.fill('black');
+		// canvas.text(700, 30, 1000/(performance.now() - start));
+		window.requestAnimationFrame(animate);
+	}
+	animate();
+
+	function constrain() {
+		points.forEach(e => e.constrain());
+	}
+
+	function updatePoints() {
+		points.forEach(e => e.update());
+	}
+
+	function updateSticks() {
+		sticks.forEach(e => e.adjust());
+	}
+
+	function render() {
+		canvas.stroke('gray');
+		canvas.lineWidth(1);
+		sticks.forEach(e => e.display());
+		canvas.fill('yellow');
+		points.forEach(e => e.display());
+	}
+
+</script>
+</body>
+</html>
