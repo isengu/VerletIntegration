@@ -33,6 +33,14 @@
 	});
 	canvas.canvas.addEventListener('mousedown', () => mouseDrag = true);
 	canvas.canvas.addEventListener('mouseup', () => mouseDrag = false);
+	canvas.canvas.addEventListener('touchstart', (e) => mouseDrag = true);
+	canvas.canvas.addEventListener('touchend', (e) => mouseDrag = false);
+	canvas.canvas.addEventListener('touchmove', (e) => {
+		e.preventDefault();
+		const rect = e.target.getBoundingClientRect();
+		mouse.x = e.changedTouches[0].pageX - rect.left;
+		mouse.y = e.changedTouches[0].pageY - rect.top;
+	});
 
 	function createCloth() {
 		const row = 25;
