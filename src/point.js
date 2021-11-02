@@ -3,11 +3,12 @@ class Point {
 		this.pos = new Vector(x, y);
 		this.prevPos = new Vector(x, y);
 		this.locked = locked;
+		this.gravity = .4;
 	}
 	update() {
 		if(!this.locked){
 			const velocity = Vector.sub(this.pos, this.prevPos);
-			velocity.y += gravity;
+			velocity.y += this.gravity;
 
 			this.prevPos.x = this.pos.x;
 			this.prevPos.y = this.pos.y;
@@ -15,7 +16,7 @@ class Point {
 			this.pos.add(velocity);
 		}
 	}
-	constrain() {
+	constrain(canvas) {
 		const velocity = Vector.sub(this.pos, this.prevPos);
 
 		if(this.pos.x > canvas.width) {
@@ -35,7 +36,7 @@ class Point {
 			this.prevPos.y = this.pos.y + velocity.y;
 		}
 	}
-	display() {
+	display(canvas) {
 		canvas.circle(this.pos.x, this.pos.y, 2);
 	}
 }

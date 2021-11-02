@@ -18,7 +18,7 @@ class Stick {
 			this.p2.pos.sub(offset);
 		}
 	}
-	display() {
+	display(canvas) {
 		canvas.line(this.p1.pos.x, this.p1.pos.y, this.p2.pos.x, this.p2.pos.y);
 	}
 }

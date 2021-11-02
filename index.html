@@ -18,104 +18,13 @@
 <script type="text/javascript" src="lib/vector.js"></script>
 <script type="text/javascript" src="src/point.js"></script>
 <script type="text/javascript" src="src/stick.js"></script>
+<script type="text/javascript" src="src/verlet.js"></script>
 <script type="text/javascript">
 	const canvas = new Canvas(800, 500);
-	const points = [];
-	const sticks = [];
-	const gravity = 0.4;
-	const mouse = new Vector(0, 0);
-	let mouseDrag = false;
+	const verlet = new Verlet(canvas);
 
-
-	canvas.canvas.addEventListener('mousemove', e => {
-		mouse.x = e.offsetX;
-		mouse.y = e.offsetY;
-	});
-	canvas.canvas.addEventListener('mousedown', () => mouseDrag = true);
-	canvas.canvas.addEventListener('mouseup', () => mouseDrag = false);
-	canvas.canvas.addEventListener('touchstart', (e) => mouseDrag = true);
-	canvas.canvas.addEventListener('touchend', (e) => mouseDrag = false);
-	canvas.canvas.addEventListener('touchmove', (e) => {
-		e.preventDefault();
-		const rect = e.target.getBoundingClientRect();
-		mouse.x = e.changedTouches[0].pageX - rect.left;
-		mouse.y = e.changedTouches[0].pageY - rect.top;
-	});
-
-	function createCloth() {
-		const row = 25;
-		const col = 25;
-		const gap = 15;
-	
-		for(let i = 0; i < row; i++) {
-			for(let j = 0; j < col; j++) {
-				if(i === 0 && j % 2 === 0) {
-					points.push(new Point(j*gap + 200, i*0 + 10, true));
-				}
-				else {
-					points.push(new Point(j*gap + 200, i*0 + 10));
-				}
-			}
-		}
-	
-		for(let i = 0; i < row; i++) {
-			for(let j = 0; j < col; j++) {
-				if(j != col-1) sticks.push(new Stick(points[j + col*i], points[j + col*i + 1], gap));
-				if(i != row-1) sticks.push(new Stick(points[j + col*i], points[j + col*(i+1)], gap));
-			}
-		}
-	}
-
-	function animate() {
-		canvas.clear();
-		cutSticks();
-		updatePoints();
-		for(let j = 0; j < 10; j++){
-			updateSticks();
-		}
-		constrain();
-		render();
-		window.requestAnimationFrame(animate);
-	}
-
-	function constrain() {
-		points.forEach(e => e.constrain());
-	}
-
-	function updatePoints() {
-		points.forEach(e => e.update());
-	}
-
-	function updateSticks() {
-		sticks.forEach(e => e.adjust());
-	}
-
-	function render() {
-		canvas.stroke('black');
-		canvas.lineWidth(0.5);
-		sticks.forEach(e => e.display());
-	}
-
-	// https://lucidar.me/en/mathematics/check-if-a-point-belongs-on-a-line-segment/
-	function cutSticks() {
-		sticks.forEach((element, index) => {
-			const ab = Vector.sub(element.p1.pos, element.p2.pos);
-			const ac = Vector.sub(element.p1.pos, mouse);
-
-			if(mouseDrag && Math.abs(Vector.cross(ab, ac)) < 50) {
-				const kac = Vector.dot(ab, ac);
-				const kab = Vector.dot(ab, ab);
-
-				if(kac > 0 && kab > kac) {
-					sticks.splice(index, 1);
-				}
-			}
-		});
-	}
-
-	createCloth();
-	animate();
-
+	verlet.createCloth();
+	verlet.animate();
 </script>
 </body>
 </html>
